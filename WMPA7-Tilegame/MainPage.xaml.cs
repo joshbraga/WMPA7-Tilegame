@@ -1,4 +1,15 @@
-﻿using System;
+﻿/*
+* FILE          : MainWindow.xaml.cs
+* PROJECT       : WMPA7-Tilegame (Universal Windows)
+* PROGRAMMER    : Balazs Karner 8646201 & Josh Braga 5895818
+* FIRST VERSION : 12/13/2020
+* DESCRIPTION   :
+*       The purpose of this project is to
+*/
+
+
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,26 +30,23 @@ using System.Diagnostics;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Media.Imaging;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+
 
 namespace WMPA7_Tilegame
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
-        System.Timers.Timer tmr = new System.Timers.Timer();
-        int Counter = 0;
+        System.Timers.Timer tmr = new System.Timers.Timer(); //Global timer which elapses every 1 second to text block
+        int Counter = 0;                                     //Global int counter to track seconds
 
-        public const int WIN = 0;
-        public const int SUSPEND = 1;
-        public const int TERMINATE = 2;
-        public const int UP = -1;
-        public const int DOWN = 1;
-        public const int LEFT = -1;
-        public const int RIGHT = 1;
-        public const int ONE_MINUTE = 60;
+        public const int WIN = 0;         //Game state indicates the player has won
+        public const int SUSPEND = 1;     //Game state indicates the last shutdown was a suspend
+        public const int TERMINATE = 2;   //Game state indicates the last shutdown was a normal suspend and terminate to save game state
+        public const int UP = -1;         //Indicates tile must move up
+        public const int DOWN = 1;        //Indicates tile must move down
+        public const int LEFT = -1;       //Indicates tile must move left
+        public const int RIGHT = 1;       //Indicates tile must move right
+        public const int ONE_MINUTE = 60; //60 seconds for minute calculations
 
         // Global translation transform used for changing the position of 
         // the Rectangle based on input data from the touch contact.
@@ -47,13 +55,13 @@ namespace WMPA7_Tilegame
         Rectangle[] rectArray;
         List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
         Boolean _gameActive = false;
-
+        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        
         public MainPage()
         {
             this.InitializeComponent();
             InitializeComponent();
 
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
             Application.Current.LeavingBackground += Current_LeavingBackground;
@@ -95,28 +103,6 @@ namespace WMPA7_Tilegame
                 RandomizeRectangles();
             }
 
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p1");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p2");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p3");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p4");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p5");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p6");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p7");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p8");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p9");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p10");
-
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("1");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("2");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("3");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("4");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("5");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("6");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("7");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("8");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("9");
-            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("10");
-
             //Clear the leader board
             leaderboard.Items.Clear();
             string player = null;
@@ -154,10 +140,18 @@ namespace WMPA7_Tilegame
             _gameActive = true;
         }
 
+        /* 
+         * METHOD      : Current_LeavingBackground()
+         * DESCRIPTION :
+         *      This method 
+         * PARAMETERS  :
+         *                          object : sender
+         *      LeavingBackgroundEventArgs : e
+         * RETURNS     :
+         *      void : void
+         */
         private void Current_LeavingBackground(object sender, Windows.ApplicationModel.LeavingBackgroundEventArgs e)
         {
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
             if (localSettings.Values["gameState"] != null)
             {
                 if ((int)localSettings.Values["gameState"] == TERMINATE)
@@ -167,10 +161,18 @@ namespace WMPA7_Tilegame
             }
         }
 
+        /* 
+         * METHOD      : Current_Suspending()
+         * DESCRIPTION :
+         *      This method 
+         * PARAMETERS  :
+         *                   object : sender
+         *      SuspendingEventArgs : e
+         * RETURNS     :
+         *      void : void
+         */
         private void Current_Suspending(Object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
             //Store counter time and stop it
             localSettings.Values["count"] = Counter;
             tmr.Stop();
@@ -197,10 +199,18 @@ namespace WMPA7_Tilegame
             }
         }
 
+        /* 
+         * METHOD      : Current_Resuming()
+         * DESCRIPTION :
+         *      This method 
+         * PARAMETERS  :
+         *      object : sender
+         *      object : e
+         * RETURNS     :
+         *      void : void
+         */
         public void Current_Resuming(Object sender, object e)
         {
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
             tmr.Start();
 
             if (localSettings.Values["count"] != null)
@@ -210,10 +220,17 @@ namespace WMPA7_Tilegame
             }
         }
 
+        /* 
+         * METHOD      : RestoreGame()
+         * DESCRIPTION :
+         *      This method 
+         * PARAMETERS  :
+         *      void : void
+         * RETURNS     :
+         *      void : void
+         */
         private void RestoreGame()
         {
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
             //If the count isn't null in local settings then restore count to saved value
             if (localSettings.Values["count"] != null)
             {
@@ -223,13 +240,13 @@ namespace WMPA7_Tilegame
 
             foreach (Rectangle r in rectArray)
             {
+                Object xPosition = null;
+                Object yPosition = null;
+                Object xPosition2 = null;
+                Object yPosition2 = null;
+
                 if (r != empty)
                 {
-                    Object xPosition = null;
-                    Object yPosition = null;
-                    Object xPosition2 = null;
-                    Object yPosition2 = null;
-
                     //Check if value is null before setting RenderTransform x from local settings
                     if (localSettings.Values["Transform." + r.Name + "x"] != null)
                     {
@@ -249,24 +266,24 @@ namespace WMPA7_Tilegame
                         check.X = (double)xPosition;
                         check.Y = (double)yPosition;
                     }
+                }
 
-                    //Check if value is null before setting Rectangle position x from local settings
-                    if (localSettings.Values[r.Name + "x"] != null)
-                    {
-                        xPosition2 = localSettings.Values[r.Name + "x"];
-                    }
+                //Check if value is null before setting Rectangle position x from local settings
+                if (localSettings.Values[r.Name + "x"] != null)
+                {
+                    xPosition2 = localSettings.Values[r.Name + "x"];
+                }
 
-                    //Check if value is null before setting Rectangle position y from local settings
-                    if (localSettings.Values[r.Name + "y"] != null)
-                    {
-                        yPosition2 = localSettings.Values[r.Name + "y"];
-                    }
+                //Check if value is null before setting Rectangle position y from local settings
+                if (localSettings.Values[r.Name + "y"] != null)
+                {
+                    yPosition2 = localSettings.Values[r.Name + "y"];
+                }
 
-                    //Check if value is null before setting Rectangle position in the dictionary
-                    if ((xPosition2 != null) && (yPosition2 != null))
-                    {
-                        RectanglePositions[r] = new KeyValuePair<int, int>((int)xPosition2, (int)yPosition2);
-                    }
+                //Check if value is null before setting Rectangle position in the dictionary
+                if ((xPosition2 != null) && (yPosition2 != null))
+                {
+                    RectanglePositions[r] = new KeyValuePair<int, int>((int)xPosition2, (int)yPosition2);
                 }
             }
 
@@ -274,6 +291,15 @@ namespace WMPA7_Tilegame
             CheckPositions();
         }
 
+        /* 
+         * METHOD      : UpdateTextblock()
+         * DESCRIPTION :
+         *      This method 
+         * PARAMETERS  :
+         *      int : newCount
+         * RETURNS     :
+         *      void : void
+         */
         async public void UpdateTextblock(int newCount)
         {
             var dispatcher = labelCounter.Dispatcher;
@@ -295,6 +321,16 @@ namespace WMPA7_Tilegame
             }
         }
 
+        /* 
+         * METHOD      : Tmr_Elapsed()
+         * DESCRIPTION :
+         *      This method 
+         * PARAMETERS  :
+         *                object : sender
+         *      ElapsedEventArgs : e
+         * RETURNS     :
+         *      void : void
+         */
         private void Tmr_Elapsed(object sender, ElapsedEventArgs e)
         {
             Counter += 1;
@@ -398,23 +434,33 @@ namespace WMPA7_Tilegame
 
                 if (win == true)
                 {
-                    Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
                     localSettings.Values["gameState"] = WIN;
                     tmr.Stop();
 
+                    //Iterate over top 10 leader board positions
                     for (int i = 1; i <= 10; i++)
                     {
-                        if (localSettings.Values["userName"] != null)
+                        //Check if local setting is null
+                        if (localSettings.Values[i.ToString()] != null)
                         {
-                            string userName = (string)localSettings.Values["userName"];
+                            //Check if current win is quicker than the i'th rank
+                            if (Counter < (int)localSettings.Values[i.ToString()])
+                            {
+                                //If current win is quicker than i'th rank, make current win the new i'th rank
+                                localSettings.Values[i.ToString()] = Counter;
+
+                                //Update the user name for the corresponding ranking as well
+                                if (localSettings.Values["userName"] != null)
+                                {
+                                    localSettings.Values["p" + i.ToString()] = localSettings.Values["userName"];
+
+                                    //Set i to 11, so loop does not reloop, and break
+                                    i = 11;
+                                    break;
+                                }
+                            }
                         }
-
-
-                        //if (localSettings.Values[i.ToString()] != null)
-                        //{
-                        //    localSettings.Values[i.ToString()]
-                        //}
                     }
                 }
             }
