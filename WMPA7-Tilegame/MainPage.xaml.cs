@@ -47,13 +47,15 @@ namespace WMPA7_Tilegame
         Rectangle[] rectArray;
         List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
         Boolean _gameActive = false;
+        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
 
         public MainPage()
         {
             this.InitializeComponent();
             InitializeComponent();
 
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
             Application.Current.LeavingBackground += Current_LeavingBackground;
@@ -89,10 +91,14 @@ namespace WMPA7_Tilegame
                 }
             }
 
-            if (localSettings.Values["gameState"] == 2)
+            if (localSettings.Values["gameState"] != null)
             {
-
+                if ((int)localSettings.Values["gameState"] == TERMINATE)
+                {
+                    //DisplaySaveRestoreDialog();
+                }
             }
+            
 
 
 
@@ -160,6 +166,24 @@ namespace WMPA7_Tilegame
             tmr.Start();
             _gameActive = true;
         }
+
+        private async void DisplaySaveRestoreDialog()
+        {
+            ContentDialog saveRestoreDialog = new ContentDialog
+            {
+                Title = "Continue Game",
+                Content = "Previous save game detected, continue or start new game?",
+                PrimaryButtonText = "New Game",
+                CloseButtonText = "Continue"                
+            };
+
+            ContentDialogResult result = await saveRestoreDialog.ShowAsync();
+
+            
+
+            
+        }
+
 
         private void Current_LeavingBackground(object sender, Windows.ApplicationModel.LeavingBackgroundEventArgs e)
         {
@@ -230,13 +254,13 @@ namespace WMPA7_Tilegame
 
             foreach (Rectangle r in rectArray)
             {
+                Object xPosition = null;
+                Object yPosition = null;
+                Object xPosition2 = null;
+                Object yPosition2 = null;
+
                 if (r != empty)
                 {
-                    Object xPosition = null;
-                    Object yPosition = null;
-                    Object xPosition2 = null;
-                    Object yPosition2 = null;
-
                     //Check if value is null before setting RenderTransform x from local settings
                     if (localSettings.Values["Transform." + r.Name + "x"] != null)
                     {
@@ -256,24 +280,25 @@ namespace WMPA7_Tilegame
                         check.X = (double)xPosition;
                         check.Y = (double)yPosition;
                     }
+                }
 
-                    //Check if value is null before setting Rectangle position x from local settings
-                    if (localSettings.Values[r.Name + "x"] != null)
-                    {
-                        xPosition2 = localSettings.Values[r.Name + "x"];
-                    }
+                //Check if value is null before setting Rectangle position x from local settings
+                if (localSettings.Values[r.Name + "x"] != null)
+                {
+                    xPosition2 = localSettings.Values[r.Name + "x"];
+                }
 
-                    //Check if value is null before setting Rectangle position y from local settings
-                    if (localSettings.Values[r.Name + "y"] != null)
-                    {
-                        yPosition2 = localSettings.Values[r.Name + "y"];
-                    }
+                //Check if value is null before setting Rectangle position y from local settings
+                if (localSettings.Values[r.Name + "y"] != null)
+                {
+                    yPosition2 = localSettings.Values[r.Name + "y"];
+                }
 
-                    //Check if value is null before setting Rectangle position in the dictionary
-                    if ((xPosition2 != null) && (yPosition2 != null))
-                    {
-                        RectanglePositions[r] = new KeyValuePair<int, int>((int)xPosition2, (int)yPosition2);
-                    }
+
+                //Check if value is null before setting Rectangle position in the dictionary
+                if ((xPosition2 != null) && (yPosition2 != null))
+                {
+                    RectanglePositions[r] = new KeyValuePair<int, int>((int)xPosition2, (int)yPosition2);
                 }
             }
 
