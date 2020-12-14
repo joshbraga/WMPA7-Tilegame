@@ -34,7 +34,7 @@
             
             <Border BorderThickness = "1" BorderBrush = "Gray" Height="600" Width="250">
                 <ScrollViewer>
-                    <ListBox Margin="0, 0, 0, 0">
+                    <ListBox Margin="0, 0, 0, 0" Name="leaderboard">
                         <ListBoxItem>Josh: 180</ListBoxItem>
                         <ListBoxItem>Norberto: 2</ListBoxItem>
                         <ListBoxItem>Baloni: 36</ListBoxItem>
