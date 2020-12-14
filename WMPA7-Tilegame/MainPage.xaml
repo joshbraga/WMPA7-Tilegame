@@ -8,7 +8,179 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,-344,0">
+        <TextBlock x:Name="TitleTextBlock" Margin="24,0,0,24" Text="15 Tiles Puzzle" FontSize="50" Style="{StaticResource TitleTextBlockStyle}"/>
 
-    </Grid>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="450,10,0,0" x:Name="elapsedTime" Text="Elapsed Time:" FontSize="40" Style="{StaticResource TitleTextBlockStyle}"/>
+            <TextBlock Margin="10,10,0,0" x:Name="labelCounter" Text="" FontSize="40" Style="{StaticResource TitleTextBlockStyle}"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+            <TextBlock></TextBlock>
+            <Border BorderThickness = "1" BorderBrush = "Gray" Height="600" Width="250" Margin = "5,55,0,0">
+                <ScrollViewer>
+                    <ListBox Margin="0, 0, 0, 0">
+                        <ListBoxItem>Josh: 180</ListBoxItem>
+                        <ListBoxItem>Norberto: 2</ListBoxItem>
+                        <ListBoxItem>Baloni: 36</ListBoxItem>
+                        <ListBoxItem>Jacobi: 28</ListBoxItem>
+                        <ListBoxItem>Jaghetti: 456</ListBoxItem>
+                        <ListBoxItem>Scott: 204</ListBoxItem>
+                    </ListBox>
+                </ScrollViewer>
+            </Border>
+        </StackPanel>
+
+        <GridView x:Name="ButtonGridView"
+          Margin="0,0,0,8"
+          RelativePanel.AlignLeftWithPanel="True"
+          RelativePanel.AlignRightWithPanel="True"
+          RelativePanel.Below="TitleTextBlock"/>
+
+        <Canvas>
+            <Grid Margin="300,70,0,0">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="200"/>
+                    <RowDefinition Height="200"/>
+                    <RowDefinition Height="200"/>
+                    <RowDefinition Height="200"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Grid.Row="0" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="0" Grid.Row="1" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="0" Grid.Row="2" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="0" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"></Border>
+
+                <Border Grid.Column="1" Grid.Row="0" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="1" Grid.Row="1" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="1" Grid.Row="2" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="1" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"></Border>
+
+                <Border Grid.Column="2" Grid.Row="0" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="2" Grid.Row="1" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="2" Grid.Row="2" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="2" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"></Border>
+
+                <Border Grid.Column="3" Grid.Row="0" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="3" Grid.Row="1" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="3" Grid.Row="2" BorderBrush="Gray" BorderThickness="1"></Border>
+                <Border Grid.Column="3" Grid.Row="3" BorderBrush="Gray" BorderThickness="1"></Border>
+
+                <Rectangle Grid.Row="0" Grid.Column="0"  Name="rectangleOne"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleOne"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="0" Grid.Column="1" Name="rectangleTwo"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleTwo"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="0" Grid.Column="2" Name="rectangleThree"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleThree"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="0" Grid.Column="3" Name="rectangleFour"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleFour"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="1" Grid.Column="0" Name="rectangleFive"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleFive"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="1" Grid.Column="1" Name="rectangleSix"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleSix"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="1" Grid.Column="2" Name="rectangleSeven"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleSeven"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="1" Grid.Column="3" Name="rectangleEight"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleEight"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="2" Grid.Column="0" Name="rectangleNine"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleNine"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="2" Grid.Column="1" Name="rectangleTen"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleTen"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="2" Grid.Column="2" Name="rectangleEleven"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleEleven"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="2" Grid.Column="3" Name="rectangleTwelve"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleTwelve"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="3" Grid.Column="0" Name="rectangleThirteen"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleThirteen"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="3" Grid.Column="1" Name="rectangleFourteen"
+               Width="200" Height="200" Fill="Red"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleFourteen"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+                <Rectangle Grid.Row="3" Grid.Column="2" Name="rectangleFifteen"
+               Width="200" Height="200" Fill="Blue"  
+               ManipulationMode="All">
+                    <Rectangle.RenderTransform>
+                        <TranslateTransform x:Name="transformRectangleFifteen"/>
+                    </Rectangle.RenderTransform>
+                </Rectangle>
+
+            </Grid>
+        </Canvas>
+    </RelativePanel>
 </Page>
