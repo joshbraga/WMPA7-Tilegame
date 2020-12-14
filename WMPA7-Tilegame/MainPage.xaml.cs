@@ -53,6 +53,7 @@ namespace WMPA7_Tilegame
             this.InitializeComponent();
             InitializeComponent();
 
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
             Application.Current.LeavingBackground += Current_LeavingBackground;
@@ -88,27 +89,61 @@ namespace WMPA7_Tilegame
                 }
             }
 
-
             CheckPositions();
             for (int i = 0; i < 500; ++i)
             {
                 RandomizeRectangles();
             }
 
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p1");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p2");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p3");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p4");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p5");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p6");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p7");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p8");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p9");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("p10");
 
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("1");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("2");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("3");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("4");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("5");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("6");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("7");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("8");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("9");
+            Windows.Storage.ApplicationData.Current.LocalSettings.Values.Remove("10");
 
             //Clear the leader board
             leaderboard.Items.Clear();
+            string player = null;
 
             //Add top 10 players to the leader board
-            for (int i = 10; i > 1; i++)
+            for (int i = 1; i <= 10; i++)
             {
-                //if (localSettings.Values[i.ToString()] != null)
-                //{
-                //    leaderboard.Items.Add();
-                //}
+                //Make player string equal to player's name with a colon
+                if (localSettings.Values["p" + i.ToString()] != null)
+                {
+                    player = (string)localSettings.Values["p" + i.ToString()] + ": ";
+
+                    //Add player's score to their name after the colon and add it to the listbox
+                    if (localSettings.Values[i.ToString()] != null)
+                    {
+                        player = player + (string)localSettings.Values[i.ToString()];
+                    }
+                }
+
+                //Add the player to the leader board if both name and score were not null
+                if ((localSettings.Values["p" + i.ToString()] != null) && (localSettings.Values[i.ToString()] != null))
+                {
+                    leaderboard.Items.Add(player);
+                }
+
+                //Reset player string
+                player = null;
             }
 
             //Start the timer for the game
@@ -367,6 +402,20 @@ namespace WMPA7_Tilegame
 
                     localSettings.Values["gameState"] = WIN;
                     tmr.Stop();
+
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        if (localSettings.Values["userName"] != null)
+                        {
+                            string userName = (string)localSettings.Values["userName"];
+                        }
+
+
+                        //if (localSettings.Values[i.ToString()] != null)
+                        //{
+                        //    localSettings.Values[i.ToString()]
+                        //}
+                    }
                 }
             }
 
