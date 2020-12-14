@@ -8,17 +8,31 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="0,0,-344,0">
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>                         
+                        <AdaptiveTrigger MinWindowHeight="1100"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="leaderboardPanel.RelativePanel.Below" Value="gameGrid"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        
         <TextBlock x:Name="TitleTextBlock" Margin="24,0,0,24" Text="15 Tiles Puzzle" FontSize="50" Style="{StaticResource TitleTextBlockStyle}"/>
-
-        <StackPanel Orientation="Horizontal">
+        
+        <StackPanel x:Name="timerPanel"  Orientation="Horizontal">
             <TextBlock Margin="450,10,0,0" x:Name="elapsedTime" Text="Elapsed Time:" FontSize="40" Style="{StaticResource TitleTextBlockStyle}"/>
             <TextBlock Margin="10,10,0,0" x:Name="labelCounter" Text="" FontSize="40" Style="{StaticResource TitleTextBlockStyle}"/>
         </StackPanel>
 
-        <StackPanel Orientation="Vertical">
-            <TextBlock></TextBlock>
-            <Border BorderThickness = "1" BorderBrush = "Gray" Height="600" Width="250" Margin = "5,55,0,0">
+        <StackPanel RelativePanel.Below="timerPanel" x:Name="leaderboardPanel" Orientation="Vertical">
+            
+            <Border BorderThickness = "1" BorderBrush = "Gray" Height="600" Width="250">
                 <ScrollViewer>
                     <ListBox Margin="0, 0, 0, 0">
                         <ListBoxItem>Josh: 180</ListBoxItem>
@@ -30,19 +44,12 @@
                     </ListBox>
                 </ScrollViewer>
             </Border>
-            
+
             <TextBlock x:Name="winMessageBox" Margin="0,10,0,0" Width="230" Height="200" FontSize="72" 
                        Text="" TextWrapping="WrapWholeWords" HorizontalTextAlignment="Center" />
         </StackPanel>
-
-        <GridView x:Name="ButtonGridView"
-          Margin="0,0,0,8"
-          RelativePanel.AlignLeftWithPanel="True"
-          RelativePanel.AlignRightWithPanel="True"
-          RelativePanel.Below="TitleTextBlock"/>
-
-        <Canvas>
-            <Grid Margin="300,70,0,0">
+        
+        <Grid x:Name="gameGrid" RelativePanel.Below="timerPanel"  RelativePanel.RightOf="leaderboardPanel" RelativePanel.AlignTopWith="leaderboardPanel">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="200"/>
@@ -184,6 +191,6 @@
                 </Rectangle>
 
             </Grid>
-        </Canvas>
+        
     </RelativePanel>
 </Page>
