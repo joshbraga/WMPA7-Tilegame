@@ -191,6 +191,12 @@
                 </Rectangle>
 
             </Grid>
+        <StackPanel x:Name="usernamePanel" Margin="0,10,0,0" RelativePanel.Below="gameGrid" RelativePanel.AlignLeftWith="gameGrid"  Orientation="Horizontal">
+            <TextBox x:Name="usernameInput" Width="200" />
+            <Button x:Name="startGameButton" Content="Start Game" Margin="10,0,0,0" Click="startGameButton_Click" />
+            <TextBlock x:Name="usernameError" Margin="10,0,0,0" IsColorFontEnabled="True" Foreground="Red"></TextBlock>
+        </StackPanel>
+        
         
     </RelativePanel>
 </Page>

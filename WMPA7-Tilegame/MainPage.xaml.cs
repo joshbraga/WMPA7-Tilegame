@@ -39,14 +39,15 @@ namespace WMPA7_Tilegame
         System.Timers.Timer tmr = new System.Timers.Timer(); //Global timer which elapses every 1 second to text block
         int Counter = 0;                                     //Global int counter to track seconds
 
-        public const int WIN = 0;         //Game state indicates the player has won
-        public const int SUSPEND = 1;     //Game state indicates the last shutdown was a suspend
-        public const int TERMINATE = 2;   //Game state indicates the last shutdown was a normal suspend and terminate to save game state
-        public const int UP = -1;         //Indicates tile must move up
-        public const int DOWN = 1;        //Indicates tile must move down
-        public const int LEFT = -1;       //Indicates tile must move left
-        public const int RIGHT = 1;       //Indicates tile must move right
-        public const int ONE_MINUTE = 60; //60 seconds for minute calculations
+        public const int WIN = 0;               //Game state indicates the player has won
+        public const int SUSPEND = 1;           //Game state indicates the last shutdown was a suspend
+        public const int TERMINATE = 2;         //Game state indicates the last shutdown was a normal suspend and terminate to save game state
+        public const int UP = -1;               //Indicates tile must move up
+        public const int DOWN = 1;              //Indicates tile must move down
+        public const int LEFT = -1;             //Indicates tile must move left
+        public const int RIGHT = 1;             //Indicates tile must move right
+        public const int ONE_MINUTE = 60;       //60 seconds for minute calculations
+        public const int RANDOMIZE_COUNT = 500; //Iterate randomize 500 times
 
         // Global translation transform used for changing the position of 
         // the Rectangle based on input data from the touch contact.
@@ -98,13 +99,6 @@ namespace WMPA7_Tilegame
                 }
             }
 
-
-            CheckPositions();
-            for (int i = 0; i < 500; ++i)
-            {
-                RandomizeRectangles();
-            }
-
             //Clear the leader board
             leaderboard.Items.Clear();
             string player = null;
@@ -134,12 +128,14 @@ namespace WMPA7_Tilegame
                 player = null;
             }
 
-            //Start the timer for the game
+            //Prepare the timer for the game
             tmr.Elapsed += Tmr_Elapsed;
             tmr.Interval = 1000;
             tmr.Enabled = true;
-            tmr.Start();
-            _gameActive = true;
+            tmr.Stop();
+
+
+            usernameInput.IsEnabled = true;
 
 
             if (localSettings.Values["gameState"] != null)
@@ -169,18 +165,26 @@ namespace WMPA7_Tilegame
 
             if (result == ContentDialogResult.Primary)
             {
-                localSettings.Values["gameState"] = WIN;
-                _gameActive = false;
-                CheckPositions();
-                Counter = 0;
-                labelCounter.Text = Counter.ToString();
-                for (int i = 0; i < 500; ++i)
+                localSettings.Values["gameState"] = WIN;                
+
+                //disable all tiles
+                foreach (Rectangle r in rectArray)
                 {
-                    RandomizeRectangles();
+                    r.PointerPressed -= Rectangle_PointerPressed_MoveLeft;
+                    r.PointerPressed -= Rectangle_PointerPressed_MoveRight;
+                    r.PointerPressed -= Rectangle_PointerPressed_MoveUp;
+                    r.PointerPressed -= Rectangle_PointerPressed_MoveDown;
                 }
+
+                usernameInput.IsEnabled = true;
+
+            }
+            else
+            {
+                tmr.Start();
             }
 
-            tmr.Start();
+            
 
         }
 
@@ -280,6 +284,12 @@ namespace WMPA7_Tilegame
             {
                 Object value = localSettings.Values["count"];
                 Counter = (int)value;
+            }
+
+            if (localSettings.Values["userName"] != null)
+            {
+                usernameInput.Text = localSettings.Values["userName"].ToString();
+                usernameInput.IsEnabled = false;
             }
 
             foreach (Rectangle r in rectArray)
@@ -582,6 +592,37 @@ namespace WMPA7_Tilegame
             {
                 MoveOnYAxis(ActiveRectangleDirectionOfMovement[selection].Key, DOWN);
             }
+        }
+
+        private void startGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            _gameActive = false;
+            usernameError.Text = "";
+
+            if (usernameInput.Text == String.Empty || usernameInput.Text == null)
+            {
+                usernameError.Text = "NAME CANNOT BE BLANK";
+            }
+            else
+            {
+                localSettings.Values["userName"] = usernameInput.Text;
+
+
+                CheckPositions();
+
+                for (int i = 0; i < RANDOMIZE_COUNT; ++i)
+                {
+                    RandomizeRectangles();
+                }
+                _gameActive = true;
+                Counter = 0;
+                labelCounter.Text = "";
+                tmr.Start();
+                usernameInput.IsEnabled = false;
+
+            }
+
+
         }
     }
 }
