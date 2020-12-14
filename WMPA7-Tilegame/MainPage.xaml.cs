@@ -39,15 +39,16 @@ namespace WMPA7_Tilegame
         System.Timers.Timer tmr = new System.Timers.Timer(); //Global timer which elapses every 1 second to text block
         int Counter = 0;                                     //Global int counter to track seconds
 
-        public const int WIN = 0;               //Game state indicates the player has won
-        public const int SUSPEND = 1;           //Game state indicates the last shutdown was a suspend
-        public const int TERMINATE = 2;         //Game state indicates the last shutdown was a normal suspend and terminate to save game state
-        public const int UP = -1;               //Indicates tile must move up
-        public const int DOWN = 1;              //Indicates tile must move down
-        public const int LEFT = -1;             //Indicates tile must move left
-        public const int RIGHT = 1;             //Indicates tile must move right
-        public const int ONE_MINUTE = 60;       //60 seconds for minute calculations
-        public const int RANDOMIZE_COUNT = 500; //Iterate randomize 500 times
+        public const int WIN = 0;                   //Game state indicates the player has won
+        public const int SUSPEND = 1;               //Game state indicates the last shutdown was a suspend
+        public const int TERMINATE = 2;             //Game state indicates the last shutdown was a normal suspend and terminate to save game state
+        public const int UP = -1;                   //Indicates tile must move up
+        public const int DOWN = 1;                  //Indicates tile must move down
+        public const int LEFT = -1;                 //Indicates tile must move left
+        public const int RIGHT = 1;                 //Indicates tile must move right
+        public const int ONE_MINUTE = 60;           //60 seconds for minute calculations
+        public const int RANDOMIZE_COUNT = 500;     //Iterate randomize 500 times
+        public const int TRANSLATE_DISTANCE = 200;  //Distance squares move
 
         // Global translation transform used for changing the position of 
         // the Rectangle based on input data from the touch contact.
@@ -437,7 +438,7 @@ namespace WMPA7_Tilegame
 
             TranslateTransform moveRectangle = (TranslateTransform)rect.RenderTransform;
 
-            moveRectangle.X += (200 * direction);
+            moveRectangle.X += (TRANSLATE_DISTANCE * direction);
 
             CheckPositions();
 
@@ -455,7 +456,7 @@ namespace WMPA7_Tilegame
 
             TranslateTransform moveRectangle = (TranslateTransform)rect.RenderTransform;
 
-            moveRectangle.Y += (200 * direction);
+            moveRectangle.Y += (TRANSLATE_DISTANCE * direction);
 
             CheckPositions();
         }
@@ -565,6 +566,10 @@ namespace WMPA7_Tilegame
             else
             {
                 winMessageBox.Text = "YOU WIN!!!";
+
+                Dictionary<string, int> myDictionary = new Dictionary<string, int>();
+                var mySortedList = myDictionary.OrderBy(d => d.Value).ToList();
+
             }
 
         }
