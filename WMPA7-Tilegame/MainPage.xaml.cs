@@ -100,7 +100,7 @@ namespace WMPA7_Tilegame
 
 
             CheckPositions();
-            for (int i = 0; i < 500; ++i)
+            for (int i = 0; i < 1; ++i)
             {
                 RandomizeRectangles();
             }
@@ -127,7 +127,7 @@ namespace WMPA7_Tilegame
                 //Add the player to the leader board if both name and score were not null
                 if ((localSettings.Values["p" + i.ToString()] != null) && (localSettings.Values[i.ToString()] != null))
                 {
-                    leaderboard.Items.Add(player);
+                    leaderboard.Items.Add(i + ". " + player);
                 }
 
                 //Reset player string
@@ -174,7 +174,7 @@ namespace WMPA7_Tilegame
                 CheckPositions();
                 Counter = 0;
                 labelCounter.Text = Counter.ToString();
-                for (int i = 0; i < 500; ++i)
+                for (int i = 0; i < 1; ++i)
                 {
                     RandomizeRectangles();
                 }
@@ -478,34 +478,7 @@ namespace WMPA7_Tilegame
 
                 if (win == true)
                 {
-
-                    localSettings.Values["gameState"] = WIN;
-                    tmr.Stop();
-
-                    //Iterate over top 10 leader board positions
-                    for (int i = 1; i <= 10; i++)
-                    {
-                        //Check if local setting is null
-                        if (localSettings.Values[i.ToString()] != null)
-                        {
-                            //Check if current win is quicker than the i'th rank
-                            if (Counter < (int)localSettings.Values[i.ToString()])
-                            {
-                                //If current win is quicker than i'th rank, make current win the new i'th rank
-                                localSettings.Values[i.ToString()] = Counter;
-
-                                //Update the user name for the corresponding ranking as well
-                                if (localSettings.Values["userName"] != null)
-                                {
-                                    localSettings.Values["p" + i.ToString()] = localSettings.Values["userName"];
-
-                                    //Set i to 11, so loop does not reloop, and break
-                                    i = 11;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    gameWon();
                 }
             }
 
@@ -581,6 +554,37 @@ namespace WMPA7_Tilegame
             else if (ActiveRectangleDirectionOfMovement[selection].Value == "DOWN")
             {
                 MoveOnYAxis(ActiveRectangleDirectionOfMovement[selection].Key, DOWN);
+            }
+        }
+
+        private void gameWon()
+        {
+            localSettings.Values["gameState"] = WIN;
+            tmr.Stop();
+
+            Dictionary<string, int> leaderBoard = new Dictionary<string, int>();
+            leaderBoard.Add((string)localSettings.Values["userName"], Counter);
+
+            for (int i = 1; i < 11; i++)
+            {
+                string playerName = (string)localSettings.Values["p" + i.ToString()];
+                int playerScore = (int)localSettings.Values[i.ToString()];
+                leaderBoard.Add(playerName, playerScore);
+            }
+
+            //https://stackoverflow.com/questions/289/how-do-you-sort-a-dictionary-by-value
+            var sortedList = leaderBoard.OrderBy(d => d.Value).ToList();
+            leaderboard.Items.Clear();
+
+            for (int i = 1; i < 11; i++)
+            {
+                string playerName = sortedList[i].Key;
+                int playerScore = sortedList[i].Value;
+
+                localSettings.Values["p" + i.ToString()] = playerName;
+                localSettings.Values[i.ToString()] = playerScore;
+
+                leaderboard.Items.Add(1 + ". " + playerName + ": " + playerScore);
             }
         }
     }
