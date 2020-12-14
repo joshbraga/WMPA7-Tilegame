@@ -56,7 +56,6 @@ namespace WMPA7_Tilegame
         List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
         Boolean _gameActive = false;
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-        Boolean saveDialogOpen = false;
 
 
         public MainPage()
