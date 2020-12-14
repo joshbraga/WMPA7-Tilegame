@@ -4,7 +4,8 @@
 * PROGRAMMER    : Balazs Karner 8646201 & Josh Braga 5895818
 * FIRST VERSION : 12/13/2020
 * DESCRIPTION   :
-*       The purpose of this project is to
+*       The purpose of this project is to creata simple 4x4 tile game with a leaderboard
+*       in UWP.
 */
 
 
@@ -47,7 +48,7 @@ namespace WMPA7_Tilegame
         public const int LEFT = -1;                 //Indicates tile must move left
         public const int RIGHT = 1;                 //Indicates tile must move right
         public const int ONE_MINUTE = 60;           //60 seconds for minute calculations
-        public const int RANDOMIZE_COUNT = 500;     //Iterate randomize 500 times
+        public const int RANDOMIZE_COUNT = 1;     //Iterate randomize 500 times
         public const int TRANSLATE_DISTANCE = 200;  //Distance squares move
 
         // Global translation transform used for changing the position of 
@@ -60,6 +61,16 @@ namespace WMPA7_Tilegame
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
 
+
+
+        // METHOD           :   MainPage
+        // DESCRIPTION      :   Constructor to the MainPage, sets up event handlers, populates
+        //                      initial data
+        //
+        // PARAMETERS       :
+        //
+        // RETURNS          :
+        //
         public MainPage()
         {
             this.InitializeComponent();
@@ -148,6 +159,16 @@ namespace WMPA7_Tilegame
             }
         }
 
+
+
+        // METHOD           :   DisplaySaveRestoreDialog
+        // DESCRIPTION      :   Opens a dialog to ask the user if they want to continue
+        //                      from previous save or start a new game.
+        //
+        // PARAMETERS       :
+        //  Nothing.
+        // RETURNS          :
+        //  Nothing.
         private async void DisplaySaveRestoreDialog()
         {
             ContentDialog saveRestoreDialog = new ContentDialog
@@ -163,7 +184,7 @@ namespace WMPA7_Tilegame
             ContentDialogResult result = await saveRestoreDialog.ShowAsync();
 
             
-
+            //new game selection
             if (result == ContentDialogResult.Primary)
             {
                 localSettings.Values["gameState"] = WIN;                
@@ -176,10 +197,11 @@ namespace WMPA7_Tilegame
                     r.PointerPressed -= Rectangle_PointerPressed_MoveUp;
                     r.PointerPressed -= Rectangle_PointerPressed_MoveDown;
                 }
-
+                //allow username input
                 usernameInput.IsEnabled = true;
 
             }
+            //continue from old save, enable timer
             else
             {
                 tmr.Start();
@@ -192,7 +214,8 @@ namespace WMPA7_Tilegame
         /* 
          * METHOD      : Current_LeavingBackground()
          * DESCRIPTION :
-         *      This method 
+         *      This method takes the event fired when the application leaves the background state and uses it
+         *      to restore data if it was launched from a terminated state.
          * PARAMETERS  :
          *                          object : sender
          *      LeavingBackgroundEventArgs : e
@@ -213,7 +236,8 @@ namespace WMPA7_Tilegame
         /* 
          * METHOD      : Current_Suspending()
          * DESCRIPTION :
-         *      This method 
+         *      This method triggers on suspend and saves all the data needed to restore the state of the
+         *      game in the event of a suspend or suspend and terminate.
          * PARAMETERS  :
          *                   object : sender
          *      SuspendingEventArgs : e
@@ -251,7 +275,8 @@ namespace WMPA7_Tilegame
         /* 
          * METHOD      : Current_Resuming()
          * DESCRIPTION :
-         *      This method 
+         *      This method triggers on resuming of the game and will restore the state of the timer
+         *      and restart it, but restore nothing else as they are already preserved.
          * PARAMETERS  :
          *      object : sender
          *      object : e
@@ -272,7 +297,8 @@ namespace WMPA7_Tilegame
         /* 
          * METHOD      : RestoreGame()
          * DESCRIPTION :
-         *      This method 
+         *      This method is called by the event for leaving suspend to restore the game state.
+         *      Restores all values from the localSettings into the game.
          * PARAMETERS  :
          *      void : void
          * RETURNS     :
@@ -349,9 +375,9 @@ namespace WMPA7_Tilegame
         /* 
          * METHOD      : UpdateTextblock()
          * DESCRIPTION :
-         *      This method 
+         *      This method allow the timer thread to update the timer counter without UI thread access.
          * PARAMETERS  :
-         *      int : newCount
+         *      int : newCount :    contains new value to write to timer
          * RETURNS     :
          *      void : void
          */
@@ -379,7 +405,8 @@ namespace WMPA7_Tilegame
         /* 
          * METHOD      : Tmr_Elapsed()
          * DESCRIPTION :
-         *      This method 
+         *      This method is an event that triggers when the timer fires its event, increments the
+         *      counter by one and updates the counter value on screen.
          * PARAMETERS  :
          *                object : sender
          *      ElapsedEventArgs : e
@@ -392,6 +419,19 @@ namespace WMPA7_Tilegame
             UpdateTextblock(Counter);
         }
 
+
+
+        // METHOD           :   Rectangle_PointerPressed_MoveUp
+        // DESCRIPTION      :   This event is fired when a tile is clicked and is specifically for moving
+        //                      tiles upward.
+        //
+        // PARAMETERS       :
+        //  object sender               :   self reference calling event
+        //  PointerRoutedEventArgs e    :   event fired on click
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void Rectangle_PointerPressed_MoveUp(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
@@ -401,6 +441,20 @@ namespace WMPA7_Tilegame
 
         }
 
+
+
+
+        // METHOD           :   Rectangle_PointerPressed_MoveDown
+        // DESCRIPTION      :   This event is fired when a tile is clicked and is specifically for moving
+        //                      tiles downward.
+        //
+        // PARAMETERS       :
+        //  object sender               :   self reference calling event
+        //  PointerRoutedEventArgs e    :   event fired on click
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void Rectangle_PointerPressed_MoveDown(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
             Rectangle rect = (Rectangle)sender;
@@ -408,6 +462,20 @@ namespace WMPA7_Tilegame
             MoveOnYAxis(rect, DOWN);
         }
 
+
+
+
+        // METHOD           :   Rectangle_PointerPressed_MoveLeft
+        // DESCRIPTION      :   This event is fired when a tile is clicked and is specifically for moving
+        //                      tiles to the left.
+        //
+        // PARAMETERS       :
+        //  object sender               :   self reference calling event
+        //  PointerRoutedEventArgs e    :   event fired on click
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void Rectangle_PointerPressed_MoveLeft(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
@@ -417,6 +485,20 @@ namespace WMPA7_Tilegame
 
         }
 
+
+
+
+        // METHOD           :   Rectangle_PointerPressed_MoveRight
+        // DESCRIPTION      :   This event is fired when a tile is clicked and is specifically for moving
+        //                      tiles to the right.
+        //
+        // PARAMETERS       :
+        //  object sender               :   self reference calling event
+        //  PointerRoutedEventArgs e    :   event fired on click
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void Rectangle_PointerPressed_MoveRight(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
 
@@ -426,6 +508,19 @@ namespace WMPA7_Tilegame
         }
 
 
+
+
+        // METHOD           :   MoveOnXAxis
+        // DESCRIPTION      :   Calculates the movement necessary for the tile to move on the X axis.
+        //                      can go left or right depending on parameter passed in
+        //
+        // PARAMETERS       :
+        //  Rectangle rect  :   contains the object ref to rectangle to be moved
+        //  int direction   :   contains direction to move, -1 is left +1 is right
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         public void MoveOnXAxis(Rectangle rect, int direction)
         {
 
@@ -445,6 +540,19 @@ namespace WMPA7_Tilegame
         }
 
 
+
+
+        // METHOD           :   MoveOnYAxis
+        // DESCRIPTION      :   Calculates the movement necessary for the tile to move on the X axis.
+        //                      can go left or right depending on parameter passed in
+        //
+        // PARAMETERS       :
+        //  Rectangle rect  :   contains the object ref to rectangle to be moved
+        //  int direction   :   contains direction to move, -1 is up +1 is down
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void MoveOnYAxis(Rectangle rect, int direction)
         {
             KeyValuePair<int, int> previousEmpty = new KeyValuePair<int, int>(RectanglePositions[empty].Key,
@@ -463,6 +571,17 @@ namespace WMPA7_Tilegame
 
 
 
+
+        // METHOD           :   CheckPositions
+        // DESCRIPTION      :   This method checks the positions of all the tiles around the empty position
+        //                      to determine which tiles need to be active and in what direction.
+        //
+        // PARAMETERS       :
+        //  Nothing.
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void CheckPositions()
         {
             int emptyRow = RectanglePositions[empty].Key;
@@ -543,6 +662,18 @@ namespace WMPA7_Tilegame
 
         }
 
+
+
+
+        // METHOD           :   RandomizeRectangles
+        // DESCRIPTION      :   Moves a random active tile when called.
+        //
+        // PARAMETERS       :
+        //  Nothing.
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         void RandomizeRectangles()
         {
             Random r = new Random(DateTime.Now.Millisecond);
@@ -568,6 +699,20 @@ namespace WMPA7_Tilegame
             }
         }
 
+
+
+
+        // METHOD           :   startGameButton_Click
+        // DESCRIPTION      :   This event is fired when the start game button is clicked to start
+        //                      the game.
+        //
+        // PARAMETERS       :
+        //  object sender               :   self reference calling event
+        //  PointerRoutedEventArgs e    :   event fired on click
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void startGameButton_Click(object sender, RoutedEventArgs e)
         {
             _gameActive = false;
@@ -596,9 +741,20 @@ namespace WMPA7_Tilegame
 
             }
 
-
         }
 
+
+
+        // METHOD           :   gameWon
+        // DESCRIPTION      :   Method fire on game won to update all the relevant data
+        //                      for the system.
+        //
+        // PARAMETERS       :
+        //  Nothing.
+        //
+        // RETURNS          :
+        //  Nothing.
+        //
         private void gameWon()
         {
             localSettings.Values["gameState"] = WIN;
