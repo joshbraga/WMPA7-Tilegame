@@ -566,10 +566,6 @@ namespace WMPA7_Tilegame
             else
             {
                 winMessageBox.Text = "YOU WIN!!!";
-
-                Dictionary<string, int> myDictionary = new Dictionary<string, int>();
-                var mySortedList = myDictionary.OrderBy(d => d.Value).ToList();
-
             }
 
         }
