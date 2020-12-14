@@ -53,17 +53,9 @@ namespace WMPA7_Tilegame
             this.InitializeComponent();
             InitializeComponent();
 
-            Debug.WriteLine("In the Constructor");
-
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
             Application.Current.LeavingBackground += Current_LeavingBackground;
-
-            //Start the timer for the
-            tmr.Elapsed += Tmr_Elapsed;
-            tmr.Interval = 1000;
-            tmr.Enabled = true;
-            tmr.Start();
 
             empty.Name = "empty";
 
@@ -103,6 +95,27 @@ namespace WMPA7_Tilegame
                 RandomizeRectangles();
             }
 
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
+
+
+            //Clear the leader board
+            leaderboard.Items.Clear();
+
+            //Add top 10 players to the leader board
+            for (int i = 10; i > 1; i++)
+            {
+                //if (localSettings.Values[i.ToString()] != null)
+                //{
+                //    leaderboard.Items.Add();
+                //}
+            }
+
+            //Start the timer for the game
+            tmr.Elapsed += Tmr_Elapsed;
+            tmr.Interval = 1000;
+            tmr.Enabled = true;
+            tmr.Start();
             _gameActive = true;
         }
 
@@ -141,19 +154,11 @@ namespace WMPA7_Tilegame
                     //Store render transformations
                     localSettings.Values["Transform." + r.Name + "x"] = xPosition;
                     localSettings.Values["Transform." + r.Name + "y"] = yPosition;
-
-                    //Store rectangle positions
-                    localSettings.Values[r.Name + "x"] = RectanglePositions[r].Key;
-                    localSettings.Values[r.Name + "y"] = RectanglePositions[r].Value;
-
-                    //composite["x"] = xPosition;
-                    //composite["y"] = yPosition;
-                    //localSettings.Values["Transform." + r.Name] = composite;
-
-                    //composite["x"] = RectanglePositions[r].Key;
-                    //composite["y"] = RectanglePositions[r].Value;
-                    //localSettings.Values[r.Name] = composite;
                 }
+
+                //Store rectangle positions
+                localSettings.Values[r.Name + "x"] = RectanglePositions[r].Key;
+                localSettings.Values[r.Name + "y"] = RectanglePositions[r].Value;
             }
         }
 
