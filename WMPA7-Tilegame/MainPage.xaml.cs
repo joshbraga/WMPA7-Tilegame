@@ -88,6 +88,12 @@ namespace WMPA7_Tilegame
                 }
             }
 
+            if (localSettings.Values["gameState"] == 2)
+            {
+
+            }
+
+
 
             CheckPositions();
             for (int i = 0; i < 500; ++i)
