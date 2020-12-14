@@ -53,14 +53,8 @@ namespace WMPA7_Tilegame
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    //Set local settings to see if it was restored from on launched global variable
-
-                    Debug.WriteLine("In the OnLaunched code");
-
                     Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                    localSettings.Values["count"] = 500;
-
-                    Debug.WriteLine(localSettings.Values["count"]);
+                    localSettings.Values["gameState"] = MainPage.TERMINATE;
                 }
 
                 // Place the frame in the current Window

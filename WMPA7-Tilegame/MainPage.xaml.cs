@@ -48,7 +48,6 @@ namespace WMPA7_Tilegame
         List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
         Boolean _gameActive = false;
 
-
         public MainPage()
         {
             this.InitializeComponent();
@@ -97,34 +96,38 @@ namespace WMPA7_Tilegame
                 }
             }
 
-            for (int i = 0; i < 3; ++i)
+
+            CheckPositions();
+            for (int i = 0; i < 500; ++i)
             {
-                CheckPositions();
                 RandomizeRectangles();
             }
-
 
             _gameActive = true;
         }
 
         private void Current_LeavingBackground(object sender, Windows.ApplicationModel.LeavingBackgroundEventArgs e)
         {
-            if (_gameState == TERMINATE)
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            if (localSettings.Values["gameState"] != null)
             {
-                RestoreGame();
+                if ((int)localSettings.Values["gameState"] == TERMINATE)
+                {
+                    RestoreGame();
+                }
             }
         }
 
         private void Current_Suspending(Object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
-            //Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             //Store counter time and stop it
             localSettings.Values["count"] = Counter;
             tmr.Stop();
 
-            _gameState = SUSPEND;
+            localSettings.Values["gameState"] = SUSPEND;
 
             foreach (Rectangle r in rectArray)
             {
@@ -159,8 +162,12 @@ namespace WMPA7_Tilegame
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             tmr.Start();
-            Object value = localSettings.Values["count"];
-            Counter = (int)value;
+
+            if (localSettings.Values["count"] != null)
+            {
+                Object value = localSettings.Values["count"];
+                Counter = (int)value;
+            }
         }
 
         private void RestoreGame()
@@ -244,7 +251,7 @@ namespace WMPA7_Tilegame
                 tempCounter = tempCounter - seconds;
                 int minutes = tempCounter / ONE_MINUTE;
 
-                labelCounter.Text = "Minutes: " + minutes + " Seconds: " + seconds;
+                labelCounter.Text = minutes + ":" + seconds;
             }
         }
 
@@ -348,6 +355,14 @@ namespace WMPA7_Tilegame
                         }
                     }
                 }
+
+                if (win == true)
+                {
+                    Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+                    localSettings.Values["gameState"] = WIN;
+                    tmr.Stop();
+                }
             }
 
 
@@ -365,7 +380,7 @@ namespace WMPA7_Tilegame
             KeyValuePair<int, int> right = new KeyValuePair<int, int>(emptyRow, emptyColumn + 1);
             KeyValuePair<int, int> down = new KeyValuePair<int, int>(emptyRow + 1, emptyColumn);
             KeyValuePair<int, int> up = new KeyValuePair<int, int>(emptyRow - 1, emptyColumn);
-
+            
 
             if (win == false)
             {
