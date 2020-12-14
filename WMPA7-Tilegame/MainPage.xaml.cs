@@ -46,6 +46,8 @@ namespace WMPA7_Tilegame
         private Rectangle empty = new Rectangle();
         Rectangle[] rectArray;
         List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
+        Boolean _gameActive = false;
+
 
         public MainPage()
         {
@@ -95,11 +97,14 @@ namespace WMPA7_Tilegame
                 }
             }
 
-            for (int i = 0; i < 100; ++i)
+            for (int i = 0; i < 3; ++i)
             {
                 CheckPositions();
                 RandomizeRectangles();
             }
+
+
+            _gameActive = true;
         }
 
         private void Current_LeavingBackground(object sender, Windows.ApplicationModel.LeavingBackgroundEventArgs e)
@@ -326,6 +331,27 @@ namespace WMPA7_Tilegame
             int emptyColumn = RectanglePositions[empty].Value;
             ActiveRectangleDirectionOfMovement.Clear();
 
+            Boolean win = false;
+
+            if (_gameActive == true)
+            {
+                win = true;
+                foreach (Rectangle r in rectArray)
+                {
+                    if (r != empty)
+                    {
+                        TranslateTransform check = (TranslateTransform)r.RenderTransform;
+                        if (check.X != 0 || check.Y != 0)
+                        {
+                            win = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+
             foreach (Rectangle r in rectArray)
             {
                 r.PointerPressed -= Rectangle_PointerPressed_MoveLeft;
@@ -341,29 +367,37 @@ namespace WMPA7_Tilegame
             KeyValuePair<int, int> up = new KeyValuePair<int, int>(emptyRow - 1, emptyColumn);
 
 
-            foreach (Rectangle r in rectArray)
+            if (win == false)
             {
-                if (RectanglePositions[r].Equals(left))
+                foreach (Rectangle r in rectArray)
                 {
-                    r.PointerPressed += Rectangle_PointerPressed_MoveRight;
-                    ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "RIGHT"));
-                }
-                else if (RectanglePositions[r].Equals(right))
-                {
-                    r.PointerPressed += Rectangle_PointerPressed_MoveLeft;
-                    ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "LEFT"));
-                }
-                else if (RectanglePositions[r].Equals(down))
-                {
-                    r.PointerPressed += Rectangle_PointerPressed_MoveUp;
-                    ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "UP"));
-                }
-                else if (RectanglePositions[r].Equals(up))
-                {
-                    r.PointerPressed += Rectangle_PointerPressed_MoveDown;
-                    ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "DOWN"));
+                    if (RectanglePositions[r].Equals(left))
+                    {
+                        r.PointerPressed += Rectangle_PointerPressed_MoveRight;
+                        ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "RIGHT"));
+                    }
+                    else if (RectanglePositions[r].Equals(right))
+                    {
+                        r.PointerPressed += Rectangle_PointerPressed_MoveLeft;
+                        ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "LEFT"));
+                    }
+                    else if (RectanglePositions[r].Equals(down))
+                    {
+                        r.PointerPressed += Rectangle_PointerPressed_MoveUp;
+                        ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "UP"));
+                    }
+                    else if (RectanglePositions[r].Equals(up))
+                    {
+                        r.PointerPressed += Rectangle_PointerPressed_MoveDown;
+                        ActiveRectangleDirectionOfMovement.Add(new KeyValuePair<Rectangle, string>(r, "DOWN"));
+                    }
                 }
             }
+            else
+            {
+                winMessageBox.Text = "YOU WIN!!!";
+            }
+
         }
 
         void RandomizeRectangles()
