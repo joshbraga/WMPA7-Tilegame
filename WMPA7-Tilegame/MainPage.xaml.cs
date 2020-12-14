@@ -48,6 +48,7 @@ namespace WMPA7_Tilegame
         List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
         Boolean _gameActive = false;
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        Boolean saveDialogOpen = false;
 
 
         public MainPage()
@@ -90,16 +91,6 @@ namespace WMPA7_Tilegame
                     RectanglePositions.Add(rectArray[index], new KeyValuePair<int, int>(i, k));
                 }
             }
-
-            if (localSettings.Values["gameState"] != null)
-            {
-                if ((int)localSettings.Values["gameState"] == TERMINATE)
-                {
-                    //DisplaySaveRestoreDialog();
-                }
-            }
-            
-
 
 
             CheckPositions();
@@ -165,6 +156,15 @@ namespace WMPA7_Tilegame
             tmr.Enabled = true;
             tmr.Start();
             _gameActive = true;
+
+
+            if (localSettings.Values["gameState"] != null)
+            {
+                if ((int)localSettings.Values["gameState"] == TERMINATE)
+                {
+                    DisplaySaveRestoreDialog();
+                }
+            }
         }
 
         private async void DisplaySaveRestoreDialog()
@@ -177,11 +177,27 @@ namespace WMPA7_Tilegame
                 CloseButtonText = "Continue"                
             };
 
+            tmr.Stop();
+
             ContentDialogResult result = await saveRestoreDialog.ShowAsync();
 
             
 
-            
+            if (result == ContentDialogResult.Primary)
+            {
+                localSettings.Values["gameState"] = WIN;
+                _gameActive = false;
+                CheckPositions();
+                Counter = 0;
+                labelCounter.Text = Counter.ToString();
+                for (int i = 0; i < 500; ++i)
+                {
+                    RandomizeRectangles();
+                }
+            }
+
+            tmr.Start();
+
         }
 
 
