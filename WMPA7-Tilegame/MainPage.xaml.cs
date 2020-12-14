@@ -31,6 +31,9 @@ namespace WMPA7_Tilegame
         System.Timers.Timer tmr = new System.Timers.Timer();
         int Counter = 0;
 
+        public const int WIN = 0;
+        public const int SUSPEND = 1;
+        public const int TERMINATE = 2;
         public const int UP = -1;
         public const int DOWN = 1;
         public const int LEFT = -1;
@@ -101,52 +104,22 @@ namespace WMPA7_Tilegame
 
         private void Current_LeavingBackground(object sender, Windows.ApplicationModel.LeavingBackgroundEventArgs e)
         {
-            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-
-            Debug.WriteLine("In the leaving background code");
-
-            if (localSettings.Values["count"] != null)
+            if (_gameState == TERMINATE)
             {
-                Object value = localSettings.Values["count"];
-                Counter = (int)value;
+                RestoreGame();
             }
-
-            
-
-
-
-            //Compare the two
-            //Debug.WriteLine("Global: " + Counter);
-            //Debug.WriteLine("Local: " + value);
-
-
         }
 
         private void Current_Suspending(Object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
-            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
+            //Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             //Store counter time and stop it
             localSettings.Values["count"] = Counter;
             tmr.Stop();
 
-            //Change game state
-            //Save user name
-
-           
-
-            //RESTORE
-            //Set rectangel positions
-            //call check positions with false on restore
-            //Set game active to true
-            //Set game name
-            //Set timer
-            //Restore leaderboards
-
-            //Object value = localSettings.Values[r.Name];
-            //Object value2 = composite["x"];
+            _gameState = SUSPEND;
 
             foreach (Rectangle r in rectArray)
             {
@@ -158,32 +131,95 @@ namespace WMPA7_Tilegame
                     double yPosition = check.Y;
 
                     //Store render transformations
-                    composite["x"] = xPosition;
-                    composite["y"] = yPosition;
-                    localSettings.Values["Transform." + r.Name] = composite;
+                    localSettings.Values["Transform." + r.Name + "x"] = xPosition;
+                    localSettings.Values["Transform." + r.Name + "y"] = yPosition;
 
                     //Store rectangle positions
-                    composite["x"] = RectanglePositions[r].Key;
-                    composite["y"] = RectanglePositions[r].Value;
-                    localSettings.Values[r.Name] = composite;
+                    localSettings.Values[r.Name + "x"] = RectanglePositions[r].Key;
+                    localSettings.Values[r.Name + "y"] = RectanglePositions[r].Value;
+
+                    //composite["x"] = xPosition;
+                    //composite["y"] = yPosition;
+                    //localSettings.Values["Transform." + r.Name] = composite;
+
+                    //composite["x"] = RectanglePositions[r].Key;
+                    //composite["y"] = RectanglePositions[r].Value;
+                    //localSettings.Values[r.Name] = composite;
                 }
             }
         }
 
         public void Current_Resuming(Object sender, object e)
         {
-            Windows.Storage.ApplicationDataCompositeValue composite = new Windows.Storage.ApplicationDataCompositeValue();
             Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
             tmr.Start();
-
             Object value = localSettings.Values["count"];
             Counter = (int)value;
+        }
 
-            //Display stored info and reset it
-            Debug.WriteLine("In the resuming code");
-            Debug.WriteLine("Global: " + Counter);
-            Debug.WriteLine("Local: " + value);
+        private void RestoreGame()
+        {
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+            //If the count isn't null in local settings then restore count to saved value
+            if (localSettings.Values["count"] != null)
+            {
+                Object value = localSettings.Values["count"];
+                Counter = (int)value;
+            }
+
+            foreach (Rectangle r in rectArray)
+            {
+                if (r != empty)
+                {
+                    Object xPosition = null;
+                    Object yPosition = null;
+                    Object xPosition2 = null;
+                    Object yPosition2 = null;
+
+                    //Check if value is null before setting RenderTransform x from local settings
+                    if (localSettings.Values["Transform." + r.Name + "x"] != null)
+                    {
+                        xPosition = localSettings.Values["Transform." + r.Name + "x"];
+                    }
+
+                    //Check if value is null before setting RenderTransform y from local settings
+                    if (localSettings.Values["Transform." + r.Name + "y"] != null)
+                    {
+                        yPosition = localSettings.Values["Transform." + r.Name + "y"];
+                    }
+
+                    //Check if value is null before setting RenderTransform
+                    if ((xPosition != null) && (yPosition != null))
+                    {
+                        TranslateTransform check = (TranslateTransform)r.RenderTransform;
+                        check.X = (double)xPosition;
+                        check.Y = (double)yPosition;
+                    }
+
+                    //Check if value is null before setting Rectangle position x from local settings
+                    if (localSettings.Values[r.Name + "x"] != null)
+                    {
+                        xPosition2 = localSettings.Values[r.Name + "x"];
+                    }
+
+                    //Check if value is null before setting Rectangle position y from local settings
+                    if (localSettings.Values[r.Name + "y"] != null)
+                    {
+                        yPosition2 = localSettings.Values[r.Name + "y"];
+                    }
+
+                    //Check if value is null before setting Rectangle position in the dictionary
+                    if ((xPosition2 != null) && (yPosition2 != null))
+                    {
+                        RectanglePositions[r] = new KeyValuePair<int, int>((int)xPosition2, (int)yPosition2);
+                    }
+                }
+            }
+
+            //Check positions of the rectangles
+            CheckPositions();
         }
 
         async public void UpdateTextblock(int newCount)
