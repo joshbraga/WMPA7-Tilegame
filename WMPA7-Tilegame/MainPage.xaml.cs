@@ -111,6 +111,20 @@ namespace WMPA7_Tilegame
                 }
             }
 
+            //Populate the leader board with placeholders
+            for (int i = 1; i < 11; i++)
+            {
+                if (localSettings.Values[i.ToString()] == null)
+                {
+                    localSettings.Values[i.ToString()] = Int32.MaxValue;
+                }
+
+                if (localSettings.Values["p" + i.ToString()] == null)
+                {
+                    localSettings.Values["p" + i.ToString()] = ("No User " + i.ToString());
+                }
+            }
+
             //Clear the leader board
             leaderboard.Items.Clear();
             string player = null;
@@ -121,12 +135,24 @@ namespace WMPA7_Tilegame
                 //Make player string equal to player's name with a colon
                 if (localSettings.Values["p" + i.ToString()] != null)
                 {
-                    player = (string)localSettings.Values["p" + i.ToString()] + ": ";
+                     player = (string)localSettings.Values["p" + i.ToString()] + ": ";
 
                     //Add player's score to their name after the colon and add it to the listbox
                     if (localSettings.Values[i.ToString()] != null)
                     {
-                        player = player + (string)localSettings.Values[i.ToString()];
+                        int playerScore = (int)localSettings.Values[i.ToString()];
+                        string dummyScore = "";
+
+                        if (playerScore == Int32.MaxValue)
+                        {
+                            dummyScore = " ";
+                        }
+                        else
+                        {
+                            dummyScore = playerScore.ToString();
+                        }
+
+                        player = player + dummyScore;
                     }
                 }
 
@@ -760,14 +786,17 @@ namespace WMPA7_Tilegame
             localSettings.Values["gameState"] = WIN;
             tmr.Stop();
 
-            Dictionary<string, int> leaderBoard = new Dictionary<string, int>();
-            leaderBoard.Add((string)localSettings.Values["userName"], Counter);
+            List<KeyValuePair<string, int>> leaderBoard = new List<KeyValuePair<string, int>>();
+
+            string currentUser = (string)localSettings.Values["userName"];
+            int currentTime = Counter;
+            leaderBoard.Add(new KeyValuePair<string, int>(currentUser, currentTime));
 
             for (int i = 1; i < 11; i++)
             {
                 string playerName = (string)localSettings.Values["p" + i.ToString()];
                 int playerScore = (int)localSettings.Values[i.ToString()];
-                leaderBoard.Add(playerName, playerScore);
+                leaderBoard.Add(new KeyValuePair<string, int>(playerName, playerScore));
             }
 
             //https://stackoverflow.com/questions/289/how-do-you-sort-a-dictionary-by-value
@@ -776,13 +805,23 @@ namespace WMPA7_Tilegame
 
             for (int i = 1; i < 11; i++)
             {
-                string playerName = sortedList[i].Key;
-                int playerScore = sortedList[i].Value;
+                string playerName = sortedList[i - 1].Key;
+                int playerScore = sortedList[i - 1].Value;
+                string dummyScore = "";
 
                 localSettings.Values["p" + i.ToString()] = playerName;
                 localSettings.Values[i.ToString()] = playerScore;
 
-                leaderboard.Items.Add(1 + ". " + playerName + ": " + playerScore);
+                if(playerScore == Int32.MaxValue)
+                {
+                    dummyScore = " ";
+                }
+                else
+                {
+                    dummyScore = playerScore.ToString();
+                }
+
+                leaderboard.Items.Add(i + ". " + playerName + ": " + dummyScore);
             }
         }
     }
