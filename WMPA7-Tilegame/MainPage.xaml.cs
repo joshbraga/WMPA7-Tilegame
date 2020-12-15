@@ -769,18 +769,17 @@ namespace WMPA7_Tilegame
 
         }
 
-
-
-        // METHOD           :   gameWon
-        // DESCRIPTION      :   Method fire on game won to update all the relevant data
-        //                      for the system.
-        //
-        // PARAMETERS       :
-        //  Nothing.
-        //
-        // RETURNS          :
-        //  Nothing.
-        //
+        /* 
+         * METHOD      : gameWon()
+         * DESCRIPTION :
+         *      This method is called when the game winning state is called. The timer is stopped, and the top 10
+         *      leader board ranks along with the current rank are added to a list with a string and int key value
+         *      pair. The list is sorted, and the local settings/leader board is re displayed in the correct ranking.
+         * PARAMETERS  :
+         *      void : void
+         * RETURNS     :
+         *      void : void
+         */
         private void gameWon()
         {
             localSettings.Values["gameState"] = WIN;
@@ -788,10 +787,12 @@ namespace WMPA7_Tilegame
 
             List<KeyValuePair<string, int>> leaderBoard = new List<KeyValuePair<string, int>>();
 
+            //Add the current attempt to the list
             string currentUser = (string)localSettings.Values["userName"];
             int currentTime = Counter;
             leaderBoard.Add(new KeyValuePair<string, int>(currentUser, currentTime));
 
+            //Add the top 10 leader board entries to the list
             for (int i = 1; i < 11; i++)
             {
                 string playerName = (string)localSettings.Values["p" + i.ToString()];
@@ -799,19 +800,25 @@ namespace WMPA7_Tilegame
                 leaderBoard.Add(new KeyValuePair<string, int>(playerName, playerScore));
             }
 
+            //REFERENCE:
+            //Bambrick, L. (2008, August, 2). How do you sort a dictionary by value?
             //https://stackoverflow.com/questions/289/how-do-you-sort-a-dictionary-by-value
+            //Sort the list with the top 10 entries, and the current attempt
             var sortedList = leaderBoard.OrderBy(d => d.Value).ToList();
             leaderboard.Items.Clear();
 
+            //Iterate over the first 10 entries for the sorted list
             for (int i = 1; i < 11; i++)
             {
                 string playerName = sortedList[i - 1].Key;
                 int playerScore = sortedList[i - 1].Value;
                 string dummyScore = "";
 
+                //Update the top 10 leader board ranks in local settings
                 localSettings.Values["p" + i.ToString()] = playerName;
                 localSettings.Values[i.ToString()] = playerScore;
 
+                //If the top 10 are still placeholders with No users, do not display the Int32.MaxValue
                 if(playerScore == Int32.MaxValue)
                 {
                     dummyScore = " ";
@@ -821,6 +828,7 @@ namespace WMPA7_Tilegame
                     dummyScore = playerScore.ToString();
                 }
 
+                //Add the user to the leader board
                 leaderboard.Items.Add(i + ". " + playerName + ": " + dummyScore);
             }
         }
