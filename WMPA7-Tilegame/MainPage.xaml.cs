@@ -76,12 +76,14 @@ namespace WMPA7_Tilegame
             this.InitializeComponent();
             InitializeComponent();
 
+            //set event listeners
             Application.Current.Suspending += Current_Suspending;
             Application.Current.Resuming += Current_Resuming;
             Application.Current.LeavingBackground += Current_LeavingBackground;
 
             empty.Name = "empty";
 
+            //initialize the indexing array
             Rectangle[] temp = {rectangleOne, rectangleTwo, rectangleThree, rectangleFour, rectangleFive,
                                      rectangleSix, rectangleSeven, rectangleEight, rectangleNine, rectangleTen,
                                      rectangleEleven, rectangleTwelve, rectangleThirteen, rectangleFourteen,
@@ -460,9 +462,8 @@ namespace WMPA7_Tilegame
         //
         private void Rectangle_PointerPressed_MoveUp(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
-
+            //gets object reference to tile from fired event and sends it to the appropriate movement function
             Rectangle rect = (Rectangle)sender;
-
             MoveOnYAxis(rect, UP);
 
         }
@@ -483,8 +484,8 @@ namespace WMPA7_Tilegame
         //
         private void Rectangle_PointerPressed_MoveDown(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
+            //gets object reference to tile from fired event and sends it to the appropriate movement function
             Rectangle rect = (Rectangle)sender;
-
             MoveOnYAxis(rect, DOWN);
         }
 
@@ -504,9 +505,8 @@ namespace WMPA7_Tilegame
         //
         private void Rectangle_PointerPressed_MoveLeft(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
-
+            //gets object reference to tile from fired event and sends it to the appropriate movement function
             Rectangle rect = (Rectangle)sender;
-
             MoveOnXAxis(rect, LEFT);
 
         }
@@ -527,9 +527,8 @@ namespace WMPA7_Tilegame
         //
         private void Rectangle_PointerPressed_MoveRight(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
         {
-
+            //gets object reference to tile from fired event and sends it to the appropriate movement function
             Rectangle rect = (Rectangle)sender;
-
             MoveOnXAxis(rect, RIGHT);
         }
 
@@ -549,18 +548,21 @@ namespace WMPA7_Tilegame
         //
         public void MoveOnXAxis(Rectangle rect, int direction)
         {
-
+            //keeping old empty position
             KeyValuePair<int, int> previousEmpty = new KeyValuePair<int, int>(RectanglePositions[empty].Key,
                                                                             RectanglePositions[empty].Value);
 
-
+            //swapping the positions of the empty and tile to move in the virtual grid within the collection
             RectanglePositions[empty] = new KeyValuePair<int, int>(RectanglePositions[rect].Key, RectanglePositions[rect].Value);
             RectanglePositions[rect] = new KeyValuePair<int, int>(previousEmpty.Key, previousEmpty.Value);
 
+            //gets the associated rendertransform of the tile into something usable for translate transforms
             TranslateTransform moveRectangle = (TranslateTransform)rect.RenderTransform;
 
+            //translates, multiplied by integer to determine direction for negative/positive movement
             moveRectangle.X += (TRANSLATE_DISTANCE * direction);
 
+            //find new active tiles
             CheckPositions();
 
         }
@@ -581,17 +583,21 @@ namespace WMPA7_Tilegame
         //
         private void MoveOnYAxis(Rectangle rect, int direction)
         {
+            //keeping old empty position
             KeyValuePair<int, int> previousEmpty = new KeyValuePair<int, int>(RectanglePositions[empty].Key,
                                                                             RectanglePositions[empty].Value);
 
-
+            //swapping the positions of the empty and tile to move in the virtual grid within the collection
             RectanglePositions[empty] = new KeyValuePair<int, int>(RectanglePositions[rect].Key, RectanglePositions[rect].Value);
             RectanglePositions[rect] = new KeyValuePair<int, int>(previousEmpty.Key, previousEmpty.Value);
 
+            //gets the associated rendertransform of the tile into something usable for translate transforms
             TranslateTransform moveRectangle = (TranslateTransform)rect.RenderTransform;
 
+            //translates, multiplied by integer to determine direction for negative/positive movement
             moveRectangle.Y += (TRANSLATE_DISTANCE * direction);
 
+            //find new active tiles
             CheckPositions();
         }
 
@@ -610,12 +616,16 @@ namespace WMPA7_Tilegame
         //
         private void CheckPositions()
         {
+            //getting the empty position in the virtual grid for reference
             int emptyRow = RectanglePositions[empty].Key;
             int emptyColumn = RectanglePositions[empty].Value;
+
+            //clearing the list of active tiles
             ActiveRectangleDirectionOfMovement.Clear();
 
             Boolean win = false;
 
+            //only checks tiles in winning positions if flag is set
             if (_gameActive == true)
             {
                 win = true;
@@ -632,6 +642,7 @@ namespace WMPA7_Tilegame
                     }
                 }
 
+                //win state
                 if (win == true)
                 {
                     gameWon();
@@ -639,7 +650,7 @@ namespace WMPA7_Tilegame
             }
 
 
-
+            //removing all events from all tiles
             foreach (Rectangle r in rectArray)
             {
                 r.PointerPressed -= Rectangle_PointerPressed_MoveLeft;
@@ -648,7 +659,7 @@ namespace WMPA7_Tilegame
                 r.PointerPressed -= Rectangle_PointerPressed_MoveDown;
             }
 
-
+            //getting the adjacent active tiles to the empty space
             KeyValuePair<int, int> left = new KeyValuePair<int, int>(emptyRow, emptyColumn - 1);
             KeyValuePair<int, int> right = new KeyValuePair<int, int>(emptyRow, emptyColumn + 1);
             KeyValuePair<int, int> down = new KeyValuePair<int, int>(emptyRow + 1, emptyColumn);
@@ -657,6 +668,8 @@ namespace WMPA7_Tilegame
 
             if (win == false)
             {
+                //looking for a match for existing tiles to the adjacent positions to empty and setting
+                //appropriate events as well as adding to the active tile collection
                 foreach (Rectangle r in rectArray)
                 {
                     if (RectanglePositions[r].Equals(left))
@@ -681,6 +694,7 @@ namespace WMPA7_Tilegame
                     }
                 }
             }
+
             else
             {
                 winMessageBox.Text = "YOU WIN!!!";
@@ -707,6 +721,8 @@ namespace WMPA7_Tilegame
             Rectangle rectSelect = ActiveRectangleDirectionOfMovement[selection].Key;
 
 
+            //uses the active tile collection to randomly select one of the valid movable tiles
+            //and moves it
             if (ActiveRectangleDirectionOfMovement[selection].Value == "RIGHT")
             {
                 MoveOnXAxis(ActiveRectangleDirectionOfMovement[selection].Key, RIGHT);
@@ -741,13 +757,18 @@ namespace WMPA7_Tilegame
         //
         private void startGameButton_Click(object sender, RoutedEventArgs e)
         {
+            //disable game active so randomize doesn't unintentionally win
             _gameActive = false;
             usernameError.Text = "";
 
+            //blank username check
             if (usernameInput.Text == String.Empty || usernameInput.Text == null)
             {
                 usernameError.Text = "NAME CANNOT BE BLANK";
             }
+
+            //valid, randomizes the game field, sets active tiles and starts the timer,
+            //disable username editing
             else
             {
                 localSettings.Values["userName"] = usernameInput.Text;
