@@ -107,6 +107,8 @@ namespace WMPA7_Tilegame
             //setting the tiles to images in the assets
             int imageNumber = 1;
 
+            //REFERNCE:
+            //Moon, D. (2016, Dec, 22). UWP C# Fill Rectangle with Image
             //https://stackoverflow.com/questions/41274473/uwp-c-sharp-fill-rectangle-with-image
             foreach (Rectangle r in rectArray)
             {
@@ -161,10 +163,12 @@ namespace WMPA7_Tilegame
                         int playerScore = (int)localSettings.Values[i.ToString()];
                         string dummyScore = "";
 
+                        //If this leader board rank is still a placeholder, display a blank score instead of int32.MaxValue
                         if (playerScore == Int32.MaxValue)
                         {
                             dummyScore = " ";
                         }
+                        //Otherwise display the correct player's score
                         else
                         {
                             dummyScore = playerScore.ToString();
@@ -270,6 +274,7 @@ namespace WMPA7_Tilegame
         {
             if (localSettings.Values["gameState"] != null)
             {
+                //If game was loaded from terminate and suspend normally then prompt user to restart or continue and restore game
                 if ((int)localSettings.Values["gameState"] == TERMINATE)
                 {
                     RestoreGame();
@@ -331,6 +336,7 @@ namespace WMPA7_Tilegame
         {
             tmr.Start();
 
+            //If count is not null in localsettings, reset timer to suspended time
             if (localSettings.Values["count"] != null)
             {
                 Object value = localSettings.Values["count"];
