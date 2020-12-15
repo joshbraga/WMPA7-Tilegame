@@ -48,7 +48,7 @@ namespace WMPA7_Tilegame
         public const int LEFT = -1;                 //Indicates tile must move left
         public const int RIGHT = 1;                 //Indicates tile must move right
         public const int ONE_MINUTE = 60;           //60 seconds for minute calculations
-        public const int RANDOMIZE_COUNT = 1;     //Iterate randomize 500 times
+        public const int RANDOMIZE_COUNT = 1;       //Iterations for randomize
         public const int TRANSLATE_DISTANCE = 200;  //Distance squares move
 
         // Global translation transform used for changing the position of 
