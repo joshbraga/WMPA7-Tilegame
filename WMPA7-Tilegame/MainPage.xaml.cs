@@ -90,6 +90,7 @@ namespace WMPA7_Tilegame
                                      rectangleFifteen, empty};
             rectArray = temp;
 
+            //setting the tiles to images in the assets
             int imageNumber = 1;
 
             //https://stackoverflow.com/questions/41274473/uwp-c-sharp-fill-rectangle-with-image
@@ -104,6 +105,7 @@ namespace WMPA7_Tilegame
                 ++imageNumber;
             }
 
+            //setting the virtual grid for game grid positioning
             for (int i = 0; i < 4; ++i)
             {
                 for (int k = 0; k < 4; ++k)
@@ -174,10 +176,10 @@ namespace WMPA7_Tilegame
             tmr.Enabled = true;
             tmr.Stop();
 
-
+            //allow user input for username
             usernameInput.IsEnabled = true;
 
-
+            //displays the continue/newgame dialog if restored from a suspended to terminated state
             if (localSettings.Values["gameState"] != null)
             {
                 if ((int)localSettings.Values["gameState"] == TERMINATE)
