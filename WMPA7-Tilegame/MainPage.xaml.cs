@@ -412,6 +412,9 @@ namespace WMPA7_Tilegame
                 }
             }
 
+
+            _gameActive = true;
+
             //Check positions of the rectangles
             CheckPositions();
         }
