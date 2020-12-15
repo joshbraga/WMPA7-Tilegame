@@ -48,16 +48,26 @@ namespace WMPA7_Tilegame
         public const int LEFT = -1;                 //Indicates tile must move left
         public const int RIGHT = 1;                 //Indicates tile must move right
         public const int ONE_MINUTE = 60;           //60 seconds for minute calculations
-        public const int RANDOMIZE_COUNT = 1;       //Iterate randomize 500 times
+        public const int RANDOMIZE_COUNT = 1;       //Iterations for randomize
         public const int TRANSLATE_DISTANCE = 200;  //Distance squares move
 
-        // Global translation transform used for changing the position of 
-        // the Rectangle based on input data from the touch contact.
+
+        //Attributes to store game state and game field data
         private Dictionary<Rectangle, KeyValuePair<int, int>> RectanglePositions = new Dictionary<Rectangle, KeyValuePair<int, int>>();
+
+        //the empty square reference
         private Rectangle empty = new Rectangle();
+
+        //used as an indexer
         Rectangle[] rectArray;
-        List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>();
+
+        //Active tiles for randomizing
+        List<KeyValuePair<Rectangle, string>> ActiveRectangleDirectionOfMovement = new List<KeyValuePair<Rectangle, string>>(); 
+
+        //used to prevent randomize from winning unintentionally
         Boolean _gameActive = false;
+
+        //localSettings storage
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
 
@@ -65,11 +75,15 @@ namespace WMPA7_Tilegame
 
         // METHOD           :   MainPage
         // DESCRIPTION      :   Constructor to the MainPage, sets up event handlers, populates
-        //                      initial data
+        //                      initial data, and sets the game state as ready to play, waiting for
+        //                      user input. Also can open a dialog box to continue previous save or
+        //                      overwrite with new game if started from a terminated state.
         //
         // PARAMETERS       :
+        //  Nothing.
         //
         // RETURNS          :
+        //  Nothing.
         //
         public MainPage()
         {
